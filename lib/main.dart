@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:meet_app/resources/auth_methods.dart';
 import 'package:meet_app/screens/home_screen.dart';
 import 'package:meet_app/screens/login_screen.dart';
 import 'package:meet_app/utils/colors.dart';
@@ -31,7 +32,20 @@ class MyApp extends StatelessWidget {
         '/login': (context) => const LoginScreenPage(),
         '/home': (context) => const HomeScreen(),
       },
-      home: const LoginScreenPage(),
+      home: StreamBuilder(
+          stream: AuthMethods().authChanges,
+          builder: (context, snapshot){
+            if(snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+            if(snapshot.hasData) {
+              return const HomeScreen();
+            }
+            return const LoginScreenPage();
+          },
+          ),
     );
   }
 }
